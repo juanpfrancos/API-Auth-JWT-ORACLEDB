@@ -6,13 +6,11 @@ from datetime import datetime, timedelta
 from queries import auth_user, get_auth_user
 from config import SECRET_KEY
 
-login = APIRouter()
-
-# Configuración de seguridad
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+login = APIRouter(tags=['Users'])
 
 # Setup OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
