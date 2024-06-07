@@ -1,10 +1,10 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from queries import auth_user, get_auth_user
 from config import SECRET_KEY
+from models.user import UserLogin
 
 
 ALGORITHM = "HS256"
@@ -42,17 +42,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 # Get access token
-@login.post("/token")
-def login_for_access_token(username: str, password: str):
-    user = auth_user(username, password)
+@login.post("/login")
+def login_for_access_token(login_credentials: UserLogin):
+    user = auth_user(login_credentials)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     access_token = create_access_token(data={"sub": user["USERNAME"]}, expires_delta=ACCESS_TOKEN_EXPIRE_MINUTES)
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-# Protected route for check authentication
-@login.get("/protected_route")
-def protected_route(current_user: dict = Depends(get_current_user)):
-    return {"message": "Hello, authenticated user!"}
