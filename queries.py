@@ -20,9 +20,11 @@ def auth_user(credentials):
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
             data = cursor.fetchone()
-            verify = pwd_context.verify(credentials.password, data["PASSWORD"])
-    if verify:
-        return data
+            if data is not None:
+                verify = pwd_context.verify(credentials.password, data["PASSWORD"])
+                if verify:
+                    return data
+            return None
     
 def get_auth_user(username: str):
     with oracledb.connect(user=DB_USER, password=DB_PASS, dsn=CS) as connection:
