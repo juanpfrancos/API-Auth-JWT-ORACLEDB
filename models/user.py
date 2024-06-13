@@ -38,3 +38,4 @@ class UserSignUp(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+    grant_type: str
