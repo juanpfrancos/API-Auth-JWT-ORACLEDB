@@ -9,6 +9,7 @@ from models.user import UserLogin
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+INVALID_CREDENTIALS = "Invalid authentication credentials"
 
 login = APIRouter(tags=['Users'])
 
@@ -30,13 +31,13 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+            raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+        raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
 
     user = get_auth_user(username)
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+        raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
 
     return user
 
@@ -46,7 +47,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 def login_for_access_token(login_credentials: UserLogin):
     user = auth_user(login_credentials)
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
 
     access_token = create_access_token(data={"sub": user["USERNAME"]}, expires_delta=ACCESS_TOKEN_EXPIRE_MINUTES)
     return {"access_token": access_token, "token_type": "bearer"}
