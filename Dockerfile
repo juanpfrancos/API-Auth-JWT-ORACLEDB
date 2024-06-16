@@ -1,7 +1,20 @@
-FROM tiangolo/uvicorn-gunicorn:python3.11-slim
+# Utiliza una imagen base ligera de Python
+FROM python:3.12-slim
 
-COPY requirements.txt /tmp/requirements.txt
+# Establece el directorio de trabajo
+WORKDIR /app
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+# Copia los archivos de requirements
+COPY requirements.txt .
 
-COPY ./app /app 
+# Instala las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia el resto del código fuente
+COPY . .
+
+# Expone el puerto en el que correrá tu aplicación
+EXPOSE 8000
+
+# Comando para ejecutar la aplicación
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

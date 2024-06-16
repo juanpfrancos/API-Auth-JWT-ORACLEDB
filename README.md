@@ -118,3 +118,11 @@ CREATE TABLE users (
     language VARCHAR2(10) DEFAULT 'en'
 );
 ```
+
+```
+docker build -t my-image .
+```
+
+```
+docker run --env-file .env -p 8000:8000 my-image
+```
