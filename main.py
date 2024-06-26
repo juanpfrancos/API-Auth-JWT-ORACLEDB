@@ -10,7 +10,9 @@ origins = [
     "http://localhost:8000",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    'http://127.0.0.1:8000'
+    "http://127.0.0.1:8000",
+    "https://juanpfrancos.eu.org",
+    "https://api.juanpfrancos.eu.org"
 ]
 
 app.add_middleware(
@@ -24,6 +26,14 @@ app.add_middleware(
 app.include_router(login)
 app.include_router(signup)
 app.include_router(protected_router)
+app.debug = False
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        proxy_headers=True,
+        forwarded_allow_ips="*",
+        workers=2
+    )
